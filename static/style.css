@@ -1,0 +1,6 @@
+body { background: #0b0d10; color: #e9ecef; }
+.card { background: #151a21; border: 1px solid #222831; color: #e9ecef; }
+.navbar { border-bottom: 1px solid #222831; }
+a.card:hover { transform: translateY(-2px); transition: transform .15s ease; border-color: #2d3748; }
+.clickable { cursor: pointer; }
+dt { color: #a0aec0; }

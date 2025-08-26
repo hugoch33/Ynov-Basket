@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-4">
+    <h2 class="mb-3">Connexion</h2>
+    <form method="post" action="{{ url_for('login_post') }}">
+      <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input class="form-control" type="email" name="email" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Mot de passe</label>
+        <input class="form-control" type="password" name="password" required>
+      </div>
+      <button class="btn btn-primary w-100" type="submit">Se connecter</button>
+    </form>
+    <hr>
+    <p class="text-muted">Pas de compte ? <a href="{{ url_for('register') }}">Créer un compte</a></p>
+  </div>
+</div>
+{% endblock %}

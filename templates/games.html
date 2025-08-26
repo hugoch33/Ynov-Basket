@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="mb-3">Matchs</h2>
+<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
+  {% for g in data.data %}
+  {% set dt = (g.date or '')[:10] %}
+  <div class="col">
+    <a class="card h-100 text-decoration-none clickable" href="{{ url_for('game_detail', game_id=g.id) }}">
+      <div class="card-body">
+        <h5 class="card-title">{{ g.home_team.abbreviation }} VS {{ g.visitor_team.abbreviation }}</h5>
+        <p class="card-text text-muted">
+          {% set y = dt.split('-')[0] if '-' in dt else '' %}
+          {% set m = dt.split('-')[1] if '-' in dt else '' %}
+          {% set d = dt.split('-')[2] if '-' in dt else '' %}
+          {{ d }}/{{ m }}/{{ y }}
+        </p>
+      </div>
+    </a>
+  </div>
+  {% endfor %}
+</div>
+<nav class="mt-4 d-flex justify-content-between">
+  <a class="btn btn-outline-secondary {% if page <= 1 %}disabled{% endif %}" href="{{ url_for('games', page=page-1) }}">Précédent</a>
+  <span class="align-self-center">Page {{ page }}</span>
+  <a class="btn btn-outline-secondary {% if data.meta.next_page is none %}disabled{% endif %}" href="{{ url_for('games', page=(data.meta.next_page or page)) }}">Suivant</a>
+</nav>
+{% endblock %}
