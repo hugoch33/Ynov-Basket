@@ -4,7 +4,7 @@ from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for, session, flash, abort
 from werkzeug.security import generate_password_hash, check_password_hash
 import requests
-from flask_caching import Cache   
+from flask_caching import Cache
 
 API_BASE = "https://api.balldontlie.io/v1"
 
@@ -38,6 +38,7 @@ def create_app():
 
     init_db()
 
+    # --- Auth helpers ---
     def login_required(view):
         from functools import wraps
         @wraps(view)
@@ -53,6 +54,9 @@ def create_app():
             "Authorization": "ba5256e6-cd8c-442e-bcbe-ea4c80dc87c8"
         }
         try:
+            # Clé de cache robuste
+            cache_key = (path, tuple(sorted(params.items())) if params else None)
+            
             r = requests.get(f"{API_BASE}{path}", params=params, headers=headers, timeout=10)
             r.raise_for_status()
             return r.json()
@@ -60,6 +64,8 @@ def create_app():
             print("API error:", e)
             return None
 
+
+    # --- Routes: Auth ---
     @app.get("/register")
     def register():
         return render_template("register.html")
@@ -119,6 +125,48 @@ def create_app():
         if not session.get("user_id"):
             return redirect(url_for("login"))
         return redirect(url_for("players"))
+
+# --- Players list ---
+    @app.get("/players")
+    @login_required
+    def players():
+        cursor = request.args.get("cursor", 0, type=int)  # valeur par défaut = 0
+        per_page = 24  
+
+        resp = api_get(f"/players?per_page={per_page}&cursor={cursor}")
+        if not resp or "data" not in resp:
+            return render_template("players.html", players=[], meta=None, cursor=cursor, per_page=per_page)
+
+        players = resp["data"]
+        meta = resp.get("meta", {})
+
+        print("=== META ===")
+        print(meta)
+
+        return render_template("players.html", players=players, meta=meta, cursor=cursor, per_page=per_page)
+
+    # --- Teams list ---
+    @app.get("/teams")
+    @login_required
+    def teams():
+        teams = api_get("/teams")
+        if not teams:
+            abort(502)
+        return render_template("teams.html", teams=teams.get("data", []))
+
+
+    # --- Games list ---
+    @app.get("/games")
+    @login_required
+    def games():
+        page = int(request.args.get("page", 1))
+        per_page = 24
+        data = api_get("/games", params={"page": page, "per_page": per_page})
+        if not data:
+            abort(502)
+        return render_template("games.html", data=data, page=page, per_page=per_page)
+
+
 
     return app
 

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="mb-3">Équipes</h2>
+<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
+  {% for t in teams %}
+  <div class="col">
+    <a class="card h-100 text-decoration-none clickable">
+      <div class="card-body">
+        <h5 class="card-title">{{ t.full_name }}</h5>
+        <p class="card-text text-muted">{{ t.abbreviation }} — {{ t.city }}</p>
+      </div>
+    </a>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

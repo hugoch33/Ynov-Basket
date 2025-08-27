@@ -5,7 +5,7 @@
   {% for g in data.data %}
   {% set dt = (g.date or '')[:10] %}
   <div class="col">
-    <a class="card h-100 text-decoration-none clickable" href="{{ url_for('game_detail', game_id=g.id) }}">
+    <a class="card h-100 text-decoration-none clickable">
       <div class="card-body">
         <h5 class="card-title">{{ g.home_team.abbreviation }} VS {{ g.visitor_team.abbreviation }}</h5>
         <p class="card-text text-muted">

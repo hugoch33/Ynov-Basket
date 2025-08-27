@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Liste des joueurs</h2>
+
+    <ul>
+    {% for player in players %}
+        <li>
+            <a href="">
+                {{ player.first_name }} {{ player.last_name }}
+            </a>
+        </li>
+    {% endfor %}
+    </ul>
+
+    <div class="pagination">
+        {% if cursor > 0 %}
+            <a href="{{ url_for('players', cursor=cursor - per_page) }}">⬅ Précédent</a>
+        {% else %}
+            <span class="disabled">⬅ Précédent</span>
+        {% endif %}
+        {% if meta.next_cursor %}
+            <a href="{{ url_for('players', cursor=meta.next_cursor) }}">Suivant ➡</a>
+        {% else %}
+            <span class="disabled">Suivant ➡</span>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
