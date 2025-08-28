@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Détails du Match</h2>
+
+    <div class="card">
+        <h3>
+            {{ game.home_team.full_name if game.home_team else "Équipe inconnue" }}
+            vs
+            {{ game.visitor_team.full_name if game.visitor_team else "Équipe inconnue" }}
+        </h3>
+
+        <div class="card-content">
+            <p><strong>Date :</strong> {{ game.date or "N/A" }}</p>
+            <p><strong>Saison :</strong> {{ game.season or "N/A" }}</p>
+
+            <p><strong>Score :</strong> 
+                {% if game.home_team_score is not none and game.visitor_team_score is not none %}
+                    {{ game.home_team_score }} - {{ game.visitor_team_score }}
+                {% else %}
+                    Non disponible
+                {% endif %}
+            </p>
+        </div>
+    </div>
+
+    <p><a href="{{ url_for('players') }}">← Retour à la liste des joueurs</a></p>
+</div>
+{% endblock %}

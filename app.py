@@ -126,11 +126,10 @@ def create_app():
             return redirect(url_for("login"))
         return redirect(url_for("players"))
 
-# --- Players list ---
     @app.get("/players")
     @login_required
     def players():
-        cursor = request.args.get("cursor", 0, type=int)  # valeur par défaut = 0
+        cursor = request.args.get("cursor", 0, type=int)
         per_page = 24  
 
         resp = api_get(f"/players?per_page={per_page}&cursor={cursor}")
@@ -145,7 +144,6 @@ def create_app():
 
         return render_template("players.html", players=players, meta=meta, cursor=cursor, per_page=per_page)
 
-    # --- Teams list ---
     @app.get("/teams")
     @login_required
     def teams():
@@ -155,7 +153,6 @@ def create_app():
         return render_template("teams.html", teams=teams.get("data", []))
 
 
-    # --- Games list ---
     @app.get("/games")
     @login_required
     def games():

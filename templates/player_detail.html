@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Détails du Joueur</h2>
+
+    {% if player %}
+    <div class="card">
+        <h3>{{ player.first_name }} {{ player.last_name }}</h3>
+
+        <div class="card-content">
+            <p><strong>Position :</strong> {{ player.position or "Non renseignée" }}</p>
+
+            <p><strong>Équipe :</strong> 
+                {% if team %}
+                    <a href="{{ url_for('team_detail', team_id=team.id) }}">
+                        {{ team.full_name }} ({{ team.abbreviation }})
+                    </a>
+                {% else %}
+                    Non renseignée
+                {% endif %}
+            </p>
+
+            {% if team %}
+                <p><strong>Ville :</strong> {{ team.city or "N/A" }}</p>
+                <p><strong>Conférence :</strong> {{ team.conference or "N/A" }}</p>
+                <p><strong>Division :</strong> {{ team.division or "N/A" }}</p>
+            {% endif %}
+        </div>
+    </div>
+    {% else %}
+        <p>⚠️ Joueur introuvable</p>
+    {% endif %}
+
+    <p><a href="{{ url_for('players') }}">← Retour à la liste des joueurs</a></p>
+</div>
+{% endblock %}
