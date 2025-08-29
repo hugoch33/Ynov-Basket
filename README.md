@@ -30,6 +30,7 @@ python app.py
         
         -http://127.0.0.1:5000
 
+Vous pourrez créer un compte en respectant la nomenclature email et un mot de passe. Ensuite, vous pourrez accéder à la page de connexion, puis les renseigner et enfin pouvoir voir les données de l'API.
 
 ## Améliorations possibles
 
