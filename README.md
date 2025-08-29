@@ -35,6 +35,6 @@ Vous pourrez créer un compte en respectant la nomenclature email et un mot de p
 ## Améliorations possibles
 
 - Ajout de barres de recherche
-- Ajout d'une autre api(pour faire de vrai cartes avec photos)
+- Ajout d'une autre api(pour faire de vrai cartes avec photos ou compléter plus d'infos sur les joueurs)
 
 
