@@ -4,7 +4,7 @@ from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for, session, flash, abort
 from werkzeug.security import generate_password_hash, check_password_hash
 import requests
-from flask_caching import Cache
+from flask_caching import Cache   # <--- ajout
 
 API_BASE = "https://api.balldontlie.io/v1"
 
@@ -38,7 +38,6 @@ def create_app():
 
     init_db()
 
-    # --- Auth helpers ---
     def login_required(view):
         from functools import wraps
         @wraps(view)
@@ -54,7 +53,6 @@ def create_app():
             "Authorization": "ba5256e6-cd8c-442e-bcbe-ea4c80dc87c8"
         }
         try:
-            # Clé de cache robuste
             cache_key = (path, tuple(sorted(params.items())) if params else None)
             
             r = requests.get(f"{API_BASE}{path}", params=params, headers=headers, timeout=10)
@@ -65,7 +63,6 @@ def create_app():
             return None
 
 
-    # --- Routes: Auth ---
     @app.get("/register")
     def register():
         return render_template("register.html")
@@ -129,7 +126,7 @@ def create_app():
     @app.get("/players")
     @login_required
     def players():
-        cursor = request.args.get("cursor", 0, type=int)
+        cursor = request.args.get("cursor", 0, type=int) 
         per_page = 24  
 
         resp = api_get(f"/players?per_page={per_page}&cursor={cursor}")
@@ -144,6 +141,22 @@ def create_app():
 
         return render_template("players.html", players=players, meta=meta, cursor=cursor, per_page=per_page)
 
+
+
+    @app.get("/player/<int:player_id>")
+    @login_required
+    def player_detail(player_id):
+        player_resp = api_get(f"/players/{player_id}")
+        player = player_resp["data"] if player_resp and "data" in player_resp else None
+
+        team = None
+        if player and "team" in player and player["team"]:
+            team_id = player["team"]["id"]
+            team_resp = api_get(f"/teams/{team_id}")
+            team = team_resp["data"] if team_resp and "data" in team_resp else None
+
+        return render_template("player_detail.html", player=player, team=team)
+
     @app.get("/teams")
     @login_required
     def teams():
@@ -152,17 +165,37 @@ def create_app():
             abort(502)
         return render_template("teams.html", teams=teams.get("data", []))
 
+    @app.get("/teams/<int:team_id>")
+    @login_required
+    def team_detail(team_id):
+        team_resp = api_get(f"/teams/{team_id}")
+        if not team_resp or "data" not in team_resp:
+            abort(404)
+        team = team_resp["data"]
+
+        players = api_get("/players", params={"per_page": 100, "team_ids[]": team_id})
+        team_players = players.get("data", []) if players else []
+
+        return render_template("team_detail.html", team=team, players=team_players)
 
     @app.get("/games")
     @login_required
     def games():
-        page = int(request.args.get("page", 1))
+        cursor = int(request.args.get("cursor", 0))   
         per_page = 24
-        data = api_get("/games", params={"page": page, "per_page": per_page})
-        if not data:
-            abort(502)
-        return render_template("games.html", data=data, page=page, per_page=per_page)
 
+        resp = api_get(f"/games?cursor={cursor}&per_page={per_page}")
+        if not resp or "data" not in resp:
+            games = []
+            meta = {"next_cursor": None}
+        else:
+            games = resp["data"]
+            meta = resp.get("meta", {"next_cursor": None})
+
+        print("=== META GAMES ===")
+        print(meta)
+
+        return render_template("games.html", games=games, meta=meta, cursor=cursor, per_page=per_page)
 
 
     return app

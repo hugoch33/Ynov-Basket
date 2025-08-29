@@ -2,29 +2,40 @@
 
 {% block content %}
 <div class="container">
-    <h2>Liste des joueurs</h2>
+    <h1 class="text-center my-4">Liste des joueurs</h1>
 
-    <ul>
-    {% for player in players %}
-        <li>
-            <a href="">
-                {{ player.first_name }} {{ player.last_name }}
-            </a>
-        </li>
-    {% endfor %}
-    </ul>
-
-    <div class="pagination">
-        {% if cursor > 0 %}
-            <a href="{{ url_for('players', cursor=cursor - per_page) }}">⬅ Précédent</a>
-        {% else %}
-            <span class="disabled">⬅ Précédent</span>
-        {% endif %}
-        {% if meta.next_cursor %}
-            <a href="{{ url_for('players', cursor=meta.next_cursor) }}">Suivant ➡</a>
-        {% else %}
-            <span class="disabled">Suivant ➡</span>
-        {% endif %}
+    <div class="row">
+        {% for player in players %}
+        <div class="col-md-3 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <h5 class="card-title">
+                        <a href="{{ url_for('player_detail', player_id=player['id']) }}" class="player-name text-decoration-none">
+                            {{ player['first_name'] }} {{ player['last_name'] }}
+                        </a>
+                    </h5>
+                    <p class="card-text">
+                        Position : {{ player['position'] if player['position'] else 'N/A' }} <br>
+                        Équipe : {{ player['team']['full_name'] if player['team'] else 'Aucune' }}
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
     </div>
+
+    <nav class="d-flex justify-content-between my-4">
+        {% if cursor > 0 %}
+        <a href="{{ url_for('players', cursor=cursor - per_page, per_page=per_page) }}" class="btn btn-primary">Précédent</a>
+        {% else %}
+        <span class="btn btn-secondary disabled">Précédent</span>
+        {% endif %}
+
+        {% if meta.next_cursor %}
+        <a href="{{ url_for('players', cursor=meta.next_cursor, per_page=per_page) }}" class="btn btn-primary">Suivant</a>
+        {% else %}
+        <span class="btn btn-secondary disabled">Suivant</span>
+        {% endif %}
+    </nav>
 </div>
 {% endblock %}
