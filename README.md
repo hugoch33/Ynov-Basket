@@ -15,7 +15,6 @@ Application Flask qui affiche joueurs, équipes et matchs de la NBA via l’API 
 ```bash
 cd ynov_basket
 py -m venv .venv
-python -m venv .venv
 #Installation des dépendances
 source .venv/bin/activate   # Linux/Mac
 .venv\Scripts\activate      # Windows
